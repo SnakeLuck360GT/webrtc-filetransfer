@@ -17,6 +17,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html { background: var(--bg); }
 
 body {
@@ -98,7 +100,28 @@ footer {
   color: var(--dim);
 }
 
-body.dragging .screen { outline: 1px dashed var(--text); outline-offset: -12px; }
+/* Drop zone: dashed while idle, inverted while files are dragged over the page. */
+
+.dropzone {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 40px 16px;
+  font: inherit;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--dim);
+  background: none;
+  border: 1px dashed var(--rule);
+  cursor: pointer;
+}
+.dropzone.small { padding: 16px; }
+.dropzone:hover { color: var(--bright); border-color: var(--text); }
+.dropzone .armed { display: none; }
+
+body.dragging .dropzone { color: #000; background: var(--text); border: 1px solid var(--text); }
+body.dragging .dropzone .idle { display: none; }
+body.dragging .dropzone .armed { display: inline; }
 
 @media (max-width: 560px) {
   .screen { padding: 24px 16px; }

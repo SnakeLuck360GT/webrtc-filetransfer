@@ -117,12 +117,20 @@ function stage(fileList) {
 }
 
 function renderStage() {
-  if (!staged.length) {
-    show("home");
-    return;
-  }
   show("stage");
-  $("stage-summary").textContent = `[ OK ] ${plural(staged.length, "file")} selected, ${formatBytes(totalSize(staged))}`;
+  const empty = !staged.length;
+
+  $("stage-summary").textContent = empty
+    ? "No files selected yet."
+    : `[ OK ] ${plural(staged.length, "file")} selected, ${formatBytes(totalSize(staged))}`;
+  $("stage-heading").hidden = empty;
+  $("dropzone").classList.toggle("small", !empty);
+  $("dropzone-label").textContent = empty ? "Drop files here, or click to choose" : "Drop more files here, or click to choose";
+  $("add-files").textContent = empty ? "[1] Choose files" : "[1] Add more files";
+  $("start-send").hidden = empty;
+  if (empty) select($("add-files"));
+  $("stage-hint").textContent = empty ? "Drop files in the box, or press 1 to choose." : "Press 1 or 2. Drop or paste to add more.";
+
   renderFiles($("stage-files"), staged).forEach((row, i) => {
     const remove = el("button", "remove", "[x]");
     remove.type = "button";
@@ -408,7 +416,7 @@ document.addEventListener("keydown", (e) => {
 
   const menu = [...document.querySelectorAll(".menu")].find((m) => m.offsetParent !== null);
   if (!menu) return;
-  const buttons = [...menu.children];
+  const buttons = [...menu.children].filter((b) => !b.hidden);
   const current = buttons.findIndex((b) => b.classList.contains("selected"));
 
   if (/^[1-9]$/.test(e.key)) {
@@ -429,12 +437,13 @@ document.addEventListener("keydown", (e) => {
 
 // Wiring
 
-$("opt-send").addEventListener("click", () => $("picker").click());
+$("opt-send").addEventListener("click", renderStage);
 $("opt-receive").addEventListener("click", () => {
   $("code-form").hidden = false;
   $("code-input").focus();
 });
 $("add-files").addEventListener("click", () => $("picker").click());
+$("dropzone").addEventListener("click", () => $("picker").click());
 $("start-send").addEventListener("click", () => send(staged));
 $("new-transfer").addEventListener("click", goHome);
 $("cancel").addEventListener("click", goHome);

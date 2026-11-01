@@ -36,13 +36,17 @@
 
   <section id="stage" hidden>
     <p class="bright" id="stage-summary"></p>
-    <h2>Files</h2>
+    <h2 id="stage-heading">Files</h2>
     <ul id="stage-files"></ul>
+    <button type="button" class="dropzone" id="dropzone">
+      <span class="idle" id="dropzone-label">Drop files here, or click to choose</span>
+      <span class="armed">Release to add files</span>
+    </button>
     <div class="menu">
-      <button type="button" data-key="1" id="add-files">[1] Add more files</button>
+      <button type="button" data-key="1" id="add-files">[1] Choose files</button>
       <button type="button" data-key="2" id="start-send">[2] Send (get a code)</button>
     </div>
-    <p class="bright">Press 1 or 2. Drop or paste to add more.<span class="cursor">_</span></p>
+    <p class="bright"><span id="stage-hint"></span><span class="cursor">_</span></p>
   </section>
 
   <input type="file" id="picker" multiple hidden>
