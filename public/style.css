@@ -1,0 +1,109 @@
+@font-face {
+  font-family: VT323;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/vendor/vt323-latin.woff2) format("woff2");
+}
+
+/* Matches the DAVID-OS BIOS screen on davidxie.dev */
+:root {
+  --bg: #000;
+  --bright: #e8e8e8;
+  --text: #b4b4b4;
+  --dim: #8c8c8c;
+  --rule: #555;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  font: 20px/1.35 VT323, ui-monospace, monospace;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.screen { max-width: 768px; margin: 0 auto; padding: 40px 24px; }
+
+.topline { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 24px; color: var(--bright); }
+
+p { margin: 12px 0 0; }
+.bright { color: var(--bright); }
+
+a { color: inherit; }
+a:hover { color: #fff; }
+
+:focus-visible { outline: 1px solid var(--bright); outline-offset: 2px; }
+
+.badge { padding: 0 4px; color: #000; background: var(--text); }
+
+.cursor { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Menus: arrow keys, number keys or the mouse move the highlight. */
+
+.menu { margin-top: 16px; }
+
+.menu button {
+  display: block;
+  width: 100%;
+  padding: 0 8px;
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.menu button.selected { color: #000; background: var(--text); }
+.menu button:focus-visible { outline: none; }
+
+#code-form { margin-top: 16px; padding: 0 8px; color: var(--bright); }
+
+#code-input {
+  width: 6ch;
+  padding: 0;
+  font: inherit;
+  letter-spacing: .1em;
+  color: var(--bright);
+  background: none;
+  border: 0;
+  caret-color: var(--bright);
+}
+#code-input::placeholder { color: var(--rule); }
+#code-input:focus { outline: none; }
+
+.code { margin: 4px 0 0; font-size: 72px; line-height: 1; letter-spacing: .12em; color: var(--bright); }
+
+h2 { margin: 24px 0 0; font: inherit; color: var(--bright); text-transform: uppercase; }
+
+ul { margin: 4px 0 0; padding: 0; list-style: none; }
+ul:empty { display: none; }
+
+/* name ........ size */
+li { display: flex; gap: 8px; white-space: nowrap; }
+.name { max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+.dots { flex: 1; overflow: hidden; color: var(--rule); }
+.dots::before { content: "................................................................................................................................"; }
+li a { margin-left: 8px; }
+
+footer {
+  margin-top: 40px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--rule);
+  font-size: 18px;
+  color: var(--dim);
+}
+
+body.dragging .screen { outline: 1px dashed var(--text); outline-offset: -12px; }
+
+@media (max-width: 560px) {
+  .screen { padding: 24px 16px; }
+  .wide { display: none; }
+  .code { font-size: 56px; }
+  li { flex-wrap: wrap; }
+  .dots { min-width: 2ch; }
+}
