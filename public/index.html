@@ -32,8 +32,20 @@
              autocomplete="off" spellcheck="false">
     </form>
     <p class="bright">Press 1 or 2, or use the arrow keys and Enter.<span class="cursor">_</span></p>
-    <input type="file" id="picker" multiple hidden>
   </section>
+
+  <section id="stage" hidden>
+    <p class="bright" id="stage-summary"></p>
+    <h2>Files</h2>
+    <ul id="stage-files"></ul>
+    <div class="menu">
+      <button type="button" data-key="1" id="add-files">[1] Add more files</button>
+      <button type="button" data-key="2" id="start-send">[2] Send (get a code)</button>
+    </div>
+    <p class="bright">Press 1 or 2. Drop or paste to add more.<span class="cursor">_</span></p>
+  </section>
+
+  <input type="file" id="picker" multiple hidden>
 
   <section id="send" hidden>
     <p class="bright" id="send-summary"></p>

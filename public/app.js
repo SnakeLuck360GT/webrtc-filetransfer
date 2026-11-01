@@ -102,6 +102,39 @@ function goHome() {
   location.href = location.pathname;
 }
 
+// Choosing files
+
+let staged = [];
+
+function stage(fileList) {
+  for (const file of fileList) {
+    const duplicate = staged.some(
+      (f) => f.name === file.name && f.size === file.size && f.lastModified === file.lastModified,
+    );
+    if (!duplicate) staged.push(file);
+  }
+  renderStage();
+}
+
+function renderStage() {
+  if (!staged.length) {
+    show("home");
+    return;
+  }
+  show("stage");
+  $("stage-summary").textContent = `[ OK ] ${plural(staged.length, "file")} selected, ${formatBytes(totalSize(staged))}`;
+  renderFiles($("stage-files"), staged).forEach((row, i) => {
+    const remove = el("button", "remove", "[x]");
+    remove.type = "button";
+    remove.setAttribute("aria-label", `Remove ${staged[i].name}`);
+    remove.onclick = () => {
+      staged.splice(i, 1);
+      renderStage();
+    };
+    row.append(remove);
+  });
+}
+
 // Sending
 
 function send(fileList) {
@@ -401,14 +434,22 @@ $("opt-receive").addEventListener("click", () => {
   $("code-form").hidden = false;
   $("code-input").focus();
 });
+$("add-files").addEventListener("click", () => $("picker").click());
+$("start-send").addEventListener("click", () => send(staged));
 $("new-transfer").addEventListener("click", goHome);
 $("cancel").addEventListener("click", goHome);
 
-$("picker").addEventListener("change", (e) => send(e.target.files));
+$("picker").addEventListener("change", (e) => {
+  stage(e.target.files);
+  e.target.value = "";
+});
+
+// Files can be dropped or pasted in while choosing, but not once sending.
+const choosing = () => !$("home").hidden || !$("stage").hidden;
 
 document.addEventListener("dragover", (e) => {
   e.preventDefault();
-  if (!$("home").hidden) document.body.classList.add("dragging");
+  if (choosing()) document.body.classList.add("dragging");
 });
 document.addEventListener("dragleave", (e) => {
   if (!e.relatedTarget) document.body.classList.remove("dragging");
@@ -416,10 +457,10 @@ document.addEventListener("dragleave", (e) => {
 document.addEventListener("drop", (e) => {
   e.preventDefault();
   document.body.classList.remove("dragging");
-  if (!$("home").hidden) send(e.dataTransfer.files);
+  if (choosing()) stage(e.dataTransfer.files);
 });
 document.addEventListener("paste", (e) => {
-  if (!$("home").hidden && e.clipboardData.files.length) send(e.clipboardData.files);
+  if (choosing() && e.clipboardData.files.length) stage(e.clipboardData.files);
 });
 
 // The code is short, so go as soon as it's complete.

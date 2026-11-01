@@ -107,3 +107,14 @@ body.dragging .screen { outline: 1px dashed var(--text); outline-offset: -12px; 
   li { flex-wrap: wrap; }
   .dots { min-width: 2ch; }
 }
+
+.remove {
+  margin-left: 8px;
+  padding: 0;
+  font: inherit;
+  color: var(--dim);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.remove:hover { color: var(--bright); }
