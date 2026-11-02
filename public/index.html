@@ -15,28 +15,25 @@
 <body>
 <main class="screen">
   <div class="topline">
-    <span>TRANSFER BIOS v1.0</span>
-    <span class="wide">Peer-to-Peer Compliant</span>
+    <a href="/" class="home-link">transfer.davidxie.dev</a>
+    <button type="button" class="back" id="back" hidden><span class="keys">[Esc] </span><span class="touch">&lt; </span>Main menu</button>
   </div>
 
   <section id="home">
     <p>Send files straight to another browser. Nothing is uploaded.</p>
-    <p>Choose an option:</p>
     <div class="menu">
       <button type="button" data-key="1" id="opt-send">[1] Send files</button>
       <button type="button" data-key="2" id="opt-receive">[2] Receive with a code</button>
     </div>
     <form id="code-form" hidden>
-      <label for="code-input">Enter code:</label>
+      <label for="code-input">Type the 4-digit code:</label>
       <input id="code-input" type="text" inputmode="numeric" placeholder="____" maxlength="64"
              autocomplete="off" spellcheck="false">
     </form>
-    <p class="bright">Press 1 or 2, or use the arrow keys and Enter.<span class="cursor">_</span></p>
   </section>
 
   <section id="stage" hidden>
     <p class="bright" id="stage-summary"></p>
-    <h2 id="stage-heading">Files</h2>
     <ul id="stage-files"></ul>
     <button type="button" class="dropzone" id="dropzone">
       <span class="idle" id="dropzone-label">Drop files here, or click to choose</span>
@@ -46,19 +43,18 @@
       <button type="button" data-key="1" id="add-files">[1] Choose files</button>
       <button type="button" data-key="2" id="start-send">[2] Send (get a code)</button>
     </div>
-    <p class="bright"><span id="stage-hint"></span><span class="cursor">_</span></p>
   </section>
 
   <input type="file" id="picker" multiple hidden>
 
   <section id="send" hidden>
-    <p class="bright" id="send-summary"></p>
     <p>Your code is</p>
     <p class="code" id="send-code">....</p>
     <p>Link: <a id="send-link"></a></p>
     <div class="menu" id="send-menu" hidden>
       <button type="button" data-key="1" id="copy-link">[1] Copy link</button>
-      <button type="button" data-key="2" id="new-transfer">[2] New transfer</button>
+      <button type="button" data-key="2" id="share-link" hidden>[2] Share link</button>
+      <button type="button" data-key="3" id="new-transfer">[3] New transfer</button>
     </div>
     <p class="bright" id="send-status">Getting a code...</p>
 
@@ -81,8 +77,7 @@
   </section>
 
   <footer>
-    <p>Files go straight between the two browsers over WebRTC, encrypted. Nothing is stored, so keep this page open until the transfer finishes. You can also drop or paste files anywhere.</p>
-    <p>Esc returns to the main menu. Made by <a href="https://davidxie.dev">David Xie</a>.</p>
+    <p>Peer-to-peer over WebRTC. Nothing is stored. Made by <a href="https://davidxie.dev">David Xie</a>.</p>
   </footer>
 </main>
 </body>

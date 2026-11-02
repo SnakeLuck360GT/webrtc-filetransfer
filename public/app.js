@@ -16,6 +16,10 @@ const BAR_WIDTH = 20;
 
 const $ = (id) => document.getElementById(id);
 
+// Phones get tap wording instead of keyboard and drag-and-drop hints.
+const touch = matchMedia("(hover: none)").matches;
+const narrow = () => matchMedia("(max-width: 560px)").matches;
+
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -27,6 +31,7 @@ function show(id) {
   for (const section of document.querySelectorAll(".screen > section")) {
     section.hidden = section.id !== id;
   }
+  $("back").hidden = id === "home";
 }
 
 function formatBytes(n) {
@@ -77,7 +82,10 @@ function renderFiles(list, files) {
 }
 
 // Returns an update(done, total) function that writes a text progress bar.
+// On narrow screens the bar is shorter and the numbers go on a second line.
 function meter(label) {
+  const width = narrow() ? 12 : BAR_WIDTH;
+  const gap = narrow() ? "\n" : "  ";
   const start = performance.now();
   let last = 0;
   return (done, total) => {
@@ -85,11 +93,11 @@ function meter(label) {
     if (now - last < 150 && done < total) return;
     last = now;
     const fraction = total ? done / total : 1;
-    const filled = Math.round(fraction * BAR_WIDTH);
+    const filled = Math.round(fraction * width);
     const rate = done / Math.max((now - start) / 1000, 0.001);
     label.textContent =
-      `[${"#".repeat(filled)}${".".repeat(BAR_WIDTH - filled)}] ${String(Math.floor(fraction * 100)).padStart(3)}%` +
-      `  ${formatBytes(done)} / ${formatBytes(total)}  ${formatBytes(rate)}/s`;
+      `[${"#".repeat(filled)}${".".repeat(width - filled)}] ${String(Math.floor(fraction * 100)).padStart(3)}%` +
+      `${gap}${formatBytes(done)} / ${formatBytes(total)} · ${formatBytes(rate)}/s`;
   };
 }
 
@@ -120,16 +128,15 @@ function renderStage() {
   show("stage");
   const empty = !staged.length;
 
-  $("stage-summary").textContent = empty
-    ? "No files selected yet."
-    : `[ OK ] ${plural(staged.length, "file")} selected, ${formatBytes(totalSize(staged))}`;
-  $("stage-heading").hidden = empty;
+  $("stage-summary").hidden = empty;
+  $("stage-summary").textContent = `[ OK ] ${plural(staged.length, "file")}, ${formatBytes(totalSize(staged))}`;
   $("dropzone").classList.toggle("small", !empty);
-  $("dropzone-label").textContent = empty ? "Drop files here, or click to choose" : "Drop more files here, or click to choose";
+  $("dropzone-label").textContent = touch
+    ? (empty ? "Tap to choose files" : "Tap to add more files")
+    : (empty ? "Drop files here, or click to choose" : "Drop more files here, or click to choose");
   $("add-files").textContent = empty ? "[1] Choose files" : "[1] Add more files";
   $("start-send").hidden = empty;
   if (empty) select($("add-files"));
-  $("stage-hint").textContent = empty ? "Drop files in the box, or press 1 to choose." : "Press 1 or 2. Drop or paste to add more.";
 
   renderFiles($("stage-files"), staged).forEach((row, i) => {
     const remove = el("button", "remove", "[x]");
@@ -149,7 +156,6 @@ function send(fileList) {
   const files = Array.from(fileList);
   if (!files.length) return;
   show("send");
-  $("send-summary").textContent = `[ OK ] ${plural(files.length, "file")} ready, ${formatBytes(totalSize(files))}`;
   renderFiles($("send-files"), files);
   window.addEventListener("beforeunload", (e) => e.preventDefault());
   host(files);
@@ -169,6 +175,10 @@ function host(files) {
         $("copy-link").textContent = "[1] Copied";
         setTimeout(() => ($("copy-link").textContent = "[1] Copy link"), 1500);
       });
+    if (navigator.share) {
+      $("share-link").hidden = false;
+      $("share-link").onclick = () => navigator.share({ title: "transfer", text: `Code ${code}`, url: link }).catch(() => {});
+    }
     $("send-menu").hidden = false;
     setStatus($("send-status"), "Keep this page open until they've received everything.");
   });
@@ -195,6 +205,7 @@ let receiverCount = 0;
 
 function serve(conn, files) {
   const row = fileRow(`Receiver ${++receiverCount}`, "Connecting...");
+  row.classList.add("receiver");
   const status = row.querySelector(".meta");
   $("receivers").append(row);
   $("no-receivers").hidden = true;
@@ -446,6 +457,7 @@ $("add-files").addEventListener("click", () => $("picker").click());
 $("dropzone").addEventListener("click", () => $("picker").click());
 $("start-send").addEventListener("click", () => send(staged));
 $("new-transfer").addEventListener("click", goHome);
+$("back").addEventListener("click", goHome);
 $("cancel").addEventListener("click", goHome);
 
 $("picker").addEventListener("change", (e) => {

@@ -30,7 +30,18 @@ body {
 
 .screen { max-width: 768px; margin: 0 auto; padding: 40px 24px; }
 
-.topline { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 24px; color: var(--bright); }
+.topline { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; margin-bottom: 24px; color: var(--bright); }
+.home-link { text-decoration: none; }
+
+.back {
+  padding: 0;
+  font: inherit;
+  color: var(--text);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.back:hover { color: #fff; }
 
 p { margin: 12px 0 0; }
 .bright { color: var(--bright); }
@@ -41,9 +52,6 @@ a:hover { color: #fff; }
 :focus-visible { outline: 1px solid var(--bright); outline-offset: 2px; }
 
 .badge { padding: 0 4px; color: #000; background: var(--text); }
-
-.cursor { animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
 
 /* Menus: arrow keys, number keys or the mouse move the highlight. */
 
@@ -87,8 +95,9 @@ ul:empty { display: none; }
 
 /* name ........ size */
 li { display: flex; gap: 8px; white-space: nowrap; }
-.name { max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
-.dots { flex: 1; overflow: hidden; color: var(--rule); }
+.name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.dots { flex: 1 0 2ch; overflow: hidden; color: var(--rule); }
+.receiver .meta, #recv-bar { white-space: pre-line; }
 .dots::before { content: "................................................................................................................................"; }
 li a { margin-left: 8px; }
 
@@ -125,10 +134,36 @@ body.dragging .dropzone .armed { display: inline; }
 
 @media (max-width: 560px) {
   .screen { padding: 24px 16px; }
-  .wide { display: none; }
   .code { font-size: 56px; }
-  li { flex-wrap: wrap; }
-  .dots { min-width: 2ch; }
+  .receiver { flex-wrap: wrap; }
+  .receiver .meta { flex-basis: 100%; }
+}
+
+/* Touch screens: tap wording, bigger targets. */
+
+.touch { display: none; }
+
+@media (hover: none) {
+  .keys { display: none; }
+  .touch { display: inline; }
+  button { -webkit-tap-highlight-color: transparent; }
+  .menu button { padding: 9px 12px; }
+  .remove { margin: -6px -8px -6px 0; padding: 6px 8px; }
+
+  /* Big code entry, sized like the code the sender sees. */
+  #code-form { padding: 0; }
+  #code-form label { display: block; }
+  #code-input {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px 16px;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: .3em;
+    border: 1px dashed var(--rule);
+  }
+  #code-input:focus { border: 1px solid var(--text); }
 }
 
 .remove {
